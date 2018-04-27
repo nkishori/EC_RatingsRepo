@@ -37,7 +37,7 @@ namespace ECRatings.Tests.Models
         [InlineData("GoldenRod")]
         [InlineData("Silver")]
         [InlineData("DeepPink")]
-        [InlineData("XXX")]
+        [InlineData("XX")]
         public void RejectInvalidBandAColors(string color)
         {
             var mockPieRepository = new ResistorBandRepository();
