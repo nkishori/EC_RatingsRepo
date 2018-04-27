@@ -1,0 +1,175 @@
+﻿@model List<ResistorBand>
+
+<div class="center"><label style="font-size:35px">Ohms Calculator</label></div>
+<div>
+    <table>
+        <tr>
+            <th align="center">Band1</th>
+            <th align="center">Band2</th>
+            <th align="center">Multiplier</th>
+            <th align="center">Tolerence</th>
+        </tr>
+        @foreach (ResistorBand r in Model)
+        {
+        <tr>
+            <td><input type="button" id="@r.Color.1" value="@r.SignificantFigures1" class="button" onclick="buttonClick(this)" /> </td>
+            <td><input type="button" id="@r.Color.2" value="@r.SignificantFigures2" class="button" onclick="buttonClick(this)" /> </td>
+            <td><input type="button" id="@r.Color.3" value="@r.Multiplier Ω" class="button" onclick="buttonClick(this)" /> </td>
+            <td><input type="button" id="@r.Color.4" value="@r.ToleranceInPercentage%" class="button" onclick="buttonClick(this)" /> </td>
+        </tr>
+        }
+    </table>
+    </div>
+<div class="center"><canvas id="canvas" ></canvas></div>
+<div class="center"><label id="Ohms" style="font-size:35px"></label></div>
+<script>
+     window.onload = function ()
+    {
+        document.getElementById("Black.1").style.backgroundColor = "Black";
+        document.getElementById("Black.2").style.backgroundColor = "Black";
+        document.getElementById("Black.3").style.backgroundColor = "Black";
+        document.getElementById("Black.4").style.backgroundColor = "Black";
+
+        document.getElementById("Brown.1").style.backgroundColor = "Brown";
+        document.getElementById("Brown.2").style.backgroundColor = "Brown";
+        document.getElementById("Brown.3").style.backgroundColor = "Brown";
+        document.getElementById("Brown.4").style.backgroundColor = "Brown";
+
+        document.getElementById("Red.1").style.backgroundColor = "Red";
+        document.getElementById("Red.2").style.backgroundColor = "Red";
+        document.getElementById("Red.3").style.backgroundColor = "Red";
+        document.getElementById("Red.4").style.backgroundColor = "Red";
+
+        document.getElementById("Yellow.1").style.backgroundColor = "Yellow";
+        document.getElementById("Yellow.2").style.backgroundColor = "Yellow";
+        document.getElementById("Yellow.3").style.backgroundColor = "Yellow";
+        document.getElementById("Yellow.4").style.backgroundColor = "Yellow";
+        document.getElementById("Yellow.1").style.color = "Black";
+        document.getElementById("Yellow.2").style.color = "Black";
+        document.getElementById("Yellow.3").style.color = "Black";
+        document.getElementById("Yellow.4").style.color = "Black";
+
+        document.getElementById("YellowGreen.1").style.backgroundColor = "YellowGreen";
+        document.getElementById("YellowGreen.2").style.backgroundColor = "YellowGreen";
+        document.getElementById("YellowGreen.3").style.backgroundColor = "YellowGreen";
+        document.getElementById("YellowGreen.4").style.backgroundColor = "YellowGreen";
+
+        document.getElementById("CornflowerBlue.1").style.backgroundColor = "CornflowerBlue";
+        document.getElementById("CornflowerBlue.2").style.backgroundColor = "CornflowerBlue";
+        document.getElementById("CornflowerBlue.3").style.backgroundColor = "CornflowerBlue";
+        document.getElementById("CornflowerBlue.4").style.backgroundColor = "CornflowerBlue";
+
+
+        document.getElementById("Orange.1").style.backgroundColor = "Orange";
+        document.getElementById("Orange.2").style.backgroundColor = "Orange";
+        document.getElementById("Orange.3").style.backgroundColor = "Orange";
+        document.getElementById("Orange.4").style.backgroundColor = "Orange";
+
+        document.getElementById("DarkViolet.1").style.backgroundColor = "DarkViolet";
+        document.getElementById("DarkViolet.2").style.backgroundColor = "DarkViolet";
+        document.getElementById("DarkViolet.3").style.backgroundColor = "DarkViolet";
+        document.getElementById("DarkViolet.4").style.backgroundColor = "DarkViolet";
+
+        document.getElementById("Grey.1").style.backgroundColor = "Grey";
+        document.getElementById("Grey.2").style.backgroundColor = "Grey";
+        document.getElementById("Grey.3").style.backgroundColor = "Grey";
+        document.getElementById("Grey.4").style.backgroundColor = "Grey";
+
+        document.getElementById("White.1").style.backgroundColor = "White";
+        document.getElementById("White.2").style.backgroundColor = "White";
+        document.getElementById("White.3").style.backgroundColor = "White";
+        document.getElementById("White.4").style.backgroundColor = "White";
+        document.getElementById("White.1").style.color = "Black";
+        document.getElementById("White.2").style.color = "Black";
+        document.getElementById("White.3").style.color = "Black";
+        document.getElementById("White.4").style.color = "Black";
+
+
+        document.getElementById("GoldenRod.1").style.backgroundColor = "GoldenRod";
+        document.getElementById("GoldenRod.2").style.backgroundColor = "GoldenRod";
+        document.getElementById("GoldenRod.3").style.backgroundColor = "GoldenRod";
+        document.getElementById("GoldenRod.4").style.backgroundColor = "GoldenRod";
+
+        document.getElementById("Silver.1").style.backgroundColor = "Silver";
+        document.getElementById("Silver.2").style.backgroundColor = "Silver";
+        document.getElementById("Silver.3").style.backgroundColor = "Silver";
+        document.getElementById("Silver.4").style.backgroundColor = "Silver";
+
+        document.getElementById("DeepPink.1").style.backgroundColor = "DeepPink";
+        document.getElementById("DeepPink.2").style.backgroundColor = "DeepPink";
+        document.getElementById("DeepPink.3").style.backgroundColor = "DeepPink";
+        document.getElementById("DeepPink.4").style.backgroundColor = "DeepPink";
+
+        //var data = '{'
+        //    + '"ohms" : "10",'
+        //    + '"bandAColor"  :"Brown",'
+        //    + '"bandBColor" : "Brown",'
+        //    + '"bandCColor" : "Brown",'
+        //    + '"bandDColor" : "Brown"'
+        //    + '}';
+
+        //displayOhmsFunc(data, null);
+    }
+
+    function buttonClick(e) {
+
+        //alert(e.id);
+        var sericeURL = "/Resistor/OhmsCalculator?id=" + e.id;
+        $.ajax({
+            type: "GET",
+            url: sericeURL,
+            success: displayOhmsFunc,
+            error: errorFunc
+        });
+
+
+        function displayOhmsFunc(data, status) {
+
+            $('#Ohms').html(data.ohms);
+
+            var oldselectedbutton = document.getElementById(data.oldId);
+            oldselectedbutton.className = "button";
+
+            var selectedbutton = document.getElementById(data.selectedId);
+            selectedbutton.className = "buttonselected";
+
+            var canvas = document.getElementById("canvas"),
+                ctx = canvas.getContext("2d");
+
+
+            var resistorimg = new Image();
+            resistorimg.src = '@Url.Content("~/images/Resistor.png")';//"http://i.imgur.com/yf6d9SX.jpg";
+
+            resistorimg.onload = function ()
+            {
+                //ctx.drawImage(resistorimg, 0, 0)
+                ctx.drawImage(resistorimg, 0, 0, resistorimg.width, resistorimg.height, 0, 0, canvas.width, canvas.height);
+
+                //bandA
+                ctx.fillStyle = data.bandAColor;
+                ctx.fillRect(59, 3, 8, 135);
+
+                //bandB
+                ctx.fillStyle = data.bandBColor;
+                ctx.fillRect(90, 14, 8, 110);
+
+                //bandC
+                ctx.fillStyle = data.bandCColor;
+                ctx.fillRect(153, 14, 8, 110);
+
+                ctx.fillStyle = data.bandDColor;
+                ctx.fillRect(242, 3, 8, 135);
+
+            }
+
+        }
+
+
+        function errorFunc(xhr, textStatus, exceptionThrown) {
+            if (textStatus.toLowerCase().indexOf("error") >= 0) {
+                alert(exceptionThrown.displayBasicErrorMessage);
+            }
+        }
+    }
+    
+</script>
