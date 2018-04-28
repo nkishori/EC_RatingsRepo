@@ -11,20 +11,25 @@
         </tr>
         @foreach (ResistorBand r in Model)
         {
-        <tr>
-            <td><input type="button" id="@r.Color.1" value="@r.SignificantFigures1" class="button" onclick="buttonClick(this)" /> </td>
-            <td><input type="button" id="@r.Color.2" value="@r.SignificantFigures2" class="button" onclick="buttonClick(this)" /> </td>
-            <td><input type="button" id="@r.Color.3" value="@r.Multiplier Ω" class="button" onclick="buttonClick(this)" /> </td>
-            <td><input type="button" id="@r.Color.4" value="@r.ToleranceInPercentage%" class="button" onclick="buttonClick(this)" /> </td>
-        </tr>
+            <tr>
+                <td><input type="button" id="@r.Color.1" value="@r.SignificantFigures1" class="button" onclick="buttonClick(this)" /> </td>
+                <td><input type="button" id="@r.Color.2" value="@r.SignificantFigures2" class="button" onclick="buttonClick(this)" /> </td>
+                <td><input type="button" id="@r.Color.3" value="@r.Multiplier Ω" class="button" onclick="buttonClick(this)" /> </td>
+                <td><input type="button" id="@r.Color.4" value="@r.ToleranceInPercentage%" class="button" onclick="buttonClick(this)" /> </td>
+            </tr>
         }
     </table>
-    </div>
-<div class="center"><canvas id="canvas" ></canvas></div>
+</div>
+<input type="hidden" id="hdn1" value="Brown" />
+<input type="hidden" id="hdn2" value="Brown" />
+<input type="hidden" id="hdn3" value="Brown" />
+<input type="hidden" id="hdn4" value="Brown" />
+
+<div class="center"><canvas id="canvas"></canvas></div>
 <div class="center"><label id="Ohms" style="font-size:35px"></label></div>
 <script>
      window.onload = function ()
-    {
+     {
         document.getElementById("Black.1").style.backgroundColor = "Black";
         document.getElementById("Black.2").style.backgroundColor = "Black";
         document.getElementById("Black.3").style.backgroundColor = "Black";
@@ -100,21 +105,15 @@
         document.getElementById("DeepPink.3").style.backgroundColor = "DeepPink";
         document.getElementById("DeepPink.4").style.backgroundColor = "DeepPink";
 
-        //var data = '{'
-        //    + '"ohms" : "10",'
-        //    + '"bandAColor"  :"Brown",'
-        //    + '"bandBColor" : "Brown",'
-        //    + '"bandCColor" : "Brown",'
-        //    + '"bandDColor" : "Brown"'
-        //    + '}';
-
-        //displayOhmsFunc(data, null);
+        buttonClick("INIT");
     }
 
-    function buttonClick(e) {
+    function buttonClick(e)
+    {
+        if (e == "INIT")
+            return;
 
-        //alert(e.id);
-        var sericeURL = "/Resistor/OhmsCalculator?id=" + e.id;
+        var sericeURL = "/Resistor/OhmsCalculator?bandAColor=" + $('#hdn1').val() + "&bandBColor=" + $('#hdn2').val() + "&bandCColor=" + $('#hdn3').val() + "&bandDColor=" + $('#hdn4').val() + "&selectedbtnId=" + e.id;
         $.ajax({
             type: "GET",
             url: sericeURL,
@@ -127,42 +126,44 @@
 
             $('#Ohms').html(data.ohms);
 
-            var oldselectedbutton = document.getElementById(data.oldId);
-            oldselectedbutton.className = "button";
+                var oldselectedbutton = document.getElementById(data.oldId);
+                oldselectedbutton.className = "button";
+
 
             var selectedbutton = document.getElementById(data.selectedId);
-            selectedbutton.className = "buttonselected";
+                selectedbutton.className = "buttonselected";
 
-            var canvas = document.getElementById("canvas"),
+                var canvas = document.getElementById("canvas"),
                 ctx = canvas.getContext("2d");
 
 
             var resistorimg = new Image();
-            resistorimg.src = '@Url.Content("~/images/Resistor.png")';//"http://i.imgur.com/yf6d9SX.jpg";
+            resistorimg.src = '@Url.Content("~/images/Resistor.png")';
 
-            resistorimg.onload = function ()
-            {
-                //ctx.drawImage(resistorimg, 0, 0)
-                ctx.drawImage(resistorimg, 0, 0, resistorimg.width, resistorimg.height, 0, 0, canvas.width, canvas.height);
+                resistorimg.onload = function () {
+                    ctx.drawImage(resistorimg, 0, 0, resistorimg.width, resistorimg.height, 0, 0, canvas.width, canvas.height);
 
-                //bandA
-                ctx.fillStyle = data.bandAColor;
-                ctx.fillRect(59, 3, 8, 135);
+                    //bandA
+                    ctx.fillStyle = data.bandAColor;
+                    ctx.fillRect(59, 3, 8, 135);
+                    $('#hdn1').val(data.bandAColor);
 
-                //bandB
-                ctx.fillStyle = data.bandBColor;
-                ctx.fillRect(90, 14, 8, 110);
+                    //bandB
+                    ctx.fillStyle = data.bandBColor;
+                    ctx.fillRect(90, 14, 8, 110);
+                    $('#hdn2').val(data.bandBColor);
 
-                //bandC
-                ctx.fillStyle = data.bandCColor;
-                ctx.fillRect(153, 14, 8, 110);
+                    //bandC
+                    ctx.fillStyle = data.bandCColor;
+                    ctx.fillRect(153, 14, 8, 110);
+                    $('#hdn3').val(data.bandCColor);
 
-                ctx.fillStyle = data.bandDColor;
-                ctx.fillRect(242, 3, 8, 135);
+                    ctx.fillStyle = data.bandDColor;
+                    ctx.fillRect(242, 3, 8, 135);
+                    $('#hdn4').val(data.bandDColor);
 
+                }
             }
-
-        }
 
 
         function errorFunc(xhr, textStatus, exceptionThrown) {
@@ -171,5 +172,5 @@
             }
         }
     }
-    
+
 </script>

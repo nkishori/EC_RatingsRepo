@@ -11,8 +11,6 @@ namespace ECRatings.Controllers
 {
     public class ResistorController : Controller
     {
-        public static string BandAColor, BandBColor, BandCColor, BandDColor;
-
         private readonly IResistorBandRepository _resistorbandRepository;
         private readonly OhmsCalculatorService _ohmsCalculatorService;
 
@@ -24,61 +22,60 @@ namespace ECRatings.Controllers
 
         public IActionResult RatingsCalculator()
         {
-            BandAColor = BandBColor = BandCColor = BandDColor = _resistorbandRepository.DefaultBandColor;
             return View(_resistorbandRepository.ResistorBands);
         }
 
-        public JsonResult OhmsCalculator(string id)
+        public JsonResult OhmsCalculator(string bandAColor, string bandBColor, string bandCColor, string bandDColor, string selectedbtnId)
         {
             string oldbtnId = string.Empty;
 
             try
             {
-                if (string.IsNullOrEmpty(id))
+                if (string.IsNullOrEmpty(selectedbtnId))
                     return null;
 
-                string[] bandId = id.Split('.');
+                string[] selbtnId = selectedbtnId.Split('.');
 
-                if (bandId.Length > 0)
+                if (selbtnId.Length > 0)
                 {
-                    switch (bandId[1])
+                    switch (selbtnId[1])
                     {
                         case "1":
-                            if (_ohmsCalculatorService.IsValidBandABColor(bandId[0]))
+                            if (_ohmsCalculatorService.IsValidBandABColor(selbtnId[0]))
                             {
-                                oldbtnId = BandAColor + "." + bandId[1];
-                                BandAColor = bandId[0];
+                                oldbtnId = bandAColor + "." + selbtnId[1];
+                                bandAColor = selbtnId[0];
                             }
                             break;
 
                         case "2":
-                            if (_ohmsCalculatorService.IsValidBandABColor(bandId[0]))
+                            if (_ohmsCalculatorService.IsValidBandABColor(selbtnId[0]))
                             {
-                                oldbtnId = BandBColor + "." + bandId[1];
-                                BandBColor = bandId[0];
+                                oldbtnId = bandBColor + "." + selbtnId[1];
+                                bandBColor = selbtnId[0];
                             }
                             break;
 
                         case "3":
-                            if (_ohmsCalculatorService.IsValidBandCColor(bandId[0]))
+                            if (_ohmsCalculatorService.IsValidBandCColor(selbtnId[0]))
                             {
-                                oldbtnId = BandCColor + "." + bandId[1];
-                                BandCColor = bandId[0];
+                                oldbtnId = bandCColor + "." + selbtnId[1];
+                                bandCColor = selbtnId[0];
                             }
                             break;
 
                         case "4":
-                            if (_ohmsCalculatorService.IsValidBandDColor(bandId[0]))
+                            if (_ohmsCalculatorService.IsValidBandDColor(selbtnId[0]))
                             {
-                                oldbtnId = BandDColor + "." + bandId[1];
-                                BandDColor = bandId[0];
+                                oldbtnId = bandDColor + "." + selbtnId[1];
+                                bandDColor = selbtnId[0];
                             }
                             break;
                     }
                 }
 
-                double ohms = _ohmsCalculatorService.CalculateOhmValue(BandAColor, BandBColor, BandCColor, BandDColor);
-                return Json(new { ohms = ohms.ToString() + " Ω ", bandAColor = BandAColor, bandBColor = BandBColor, bandCColor = BandCColor, bandDColor = BandDColor, oldId = oldbtnId, selectedId = id });
+                double ohms = _ohmsCalculatorService.CalculateOhmValue(bandAColor, bandBColor, bandCColor, bandDColor);
+                return Json(new { ohms = ohms.ToString() + " Ω ", bandAColor = bandAColor, bandBColor = bandBColor, bandCColor = bandCColor, bandDColor = bandDColor, oldId = oldbtnId, selectedId = selectedbtnId });
             }
             catch (Exception ex)
             {
